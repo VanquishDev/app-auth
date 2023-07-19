@@ -12,6 +12,11 @@ export default function Home() {
       <Button variant="link">
         <Link href="/auth/login">Login</Link>
       </Button>
+      <Button variant="link">
+        <Link href="/dashboard" className="mr-2">
+        Dashboard
+        </Link>
+      </Button>
     </main>
   );
 }
