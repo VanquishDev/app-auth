@@ -1,9 +1,9 @@
 'use client';
+
 import React from 'react';
 import { Auth } from 'aws-amplify';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
-import AmplifyProvider from '../provider';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { Label } from '@/components/ui/label';
@@ -19,6 +19,7 @@ const signUpSchema = z.object({
 });
 
 const confirmationSchema = z.object({
+  username: z.string(),
   confirmationCode: z.string(),
 });
 
@@ -28,65 +29,64 @@ type ConfirmationFields = z.infer<typeof confirmationSchema>;
 
 export default function Page() {
   const [isConfirmation, setConfirmation] = React.useState(false);
-  const [username, setUsername] = React.useState<string>('');
+
   const methods = useForm<SignUpFields>({
     resolver: zodResolver(signUpSchema),
   });
+
   const { register, handleSubmit } = useForm<ConfirmationFields>({
     resolver: zodResolver(confirmationSchema),
   });
+
   const router = useRouter();
 
-  const onSubmit = async ({
-    username,
-    email,
-    phone,
-    password,
-  }: SignUpFields) => {
+  const onSubmit = async ({ username, email, password, name }: SignUpFields) => {
     const isValid = await methods.trigger();
     if (isValid) {
       try {
-        setUsername(username);
         const { user } = await Auth.signUp({
           username,
           password,
           attributes: {
             name,
             email,
-            phone_number: phone,
+            phone_number: null,
           },
           autoSignIn: {
             enabled: false,
           },
         });
-        console.log(user);
+        console.log('Auth.signUp', user);
         user && setConfirmation(true);
       } catch (error) {
-        console.log(error);
+        console.log('Auth.signUp', error);
       }
     }
   };
-  
-  const confirmCode = async ({ confirmationCode }: ConfirmationFields) => {
+
+  const confirmCode = async ({
+    confirmationCode,
+    username,
+  }: ConfirmationFields) => {
     try {
       await Auth.confirmSignUp(username, confirmationCode);
-      router.push('/auth/login');
+      router.push('/login');
     } catch (error) {
       console.error(error);
     }
   };
 
   return (
-    <AmplifyProvider>
+    <>
       {isConfirmation ? (
         <div
-          className="container mx-auto h-screen p-8 flex items-center"
+          className="container mx-auto h-screen flex justify-center items-center"
           onSubmit={handleSubmit(confirmCode)}
         >
-          <form className="flex flex-col gap-2">
+          <form className="flex flex-col gap-6">
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Username</Label>
-              <Input type="text" id="username" />
+              <Input type="text" id="username" {...register('username')} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Confirmation code</Label>
@@ -99,6 +99,9 @@ export default function Page() {
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Button>Submit</Button>
             </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Button onClick={() => setConfirmation(false)}>Sign Up</Button>
+            </div>
           </form>
         </div>
       ) : (
@@ -106,40 +109,20 @@ export default function Page() {
           className="container mx-auto h-screen flex justify-center items-center"
           onSubmit={methods.handleSubmit(onSubmit)}
         >
-          <form className="flex flex-col gap-2">
+          <form className="flex flex-col gap-6">
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Name</Label>
-              <Input
-                type="text"
-                id="name"
-                placeholder="Name"
-                {...methods.register('name')}
-              />
+              <Input type="text" id="name" {...methods.register('name')} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Email</Label>
-              <Input
-                type="email"
-                id="email"
-                placeholder="Email"
-                {...methods.register('email')}
-              />
-            </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Label>Phone</Label>
-              <Input
-                type="tel"
-                id="phone"
-                placeholder="Phone"
-                {...methods.register('phone')}
-              />
+              <Input type="email" id="email" {...methods.register('email')} />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Username</Label>
               <Input
                 type="text"
                 id="username"
-                placeholder="Username"
                 {...methods.register('username')}
               />
             </div>
@@ -148,16 +131,20 @@ export default function Page() {
               <Input
                 type="password"
                 id="password"
-                placeholder="Password"
                 {...methods.register('password')}
               />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Button>Submit</Button>
             </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Button onClick={() => setConfirmation(true)}>
+                Confirmation Code
+              </Button>
+            </div>
           </form>
         </div>
       )}
-    </AmplifyProvider>
+    </>
   );
 }

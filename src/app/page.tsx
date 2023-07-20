@@ -1,22 +1,7 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-
 export default function Home() {
   return (
-    <main className="min-h-screen items-center justify-between p-24">
-      <Button variant="link">
-        <Link href="/auth/signup" className="mr-2">
-          Sign Up
-        </Link>
-      </Button>
-      <Button variant="link">
-        <Link href="/auth/login">Login</Link>
-      </Button>
-      <Button variant="link">
-        <Link href="/dashboard" className="mr-2">
-        Dashboard
-        </Link>
-      </Button>
+    <main className="container mx-auto h-screen flex justify-center items-center">
+      app-auth.component
     </main>
   );
 }
