@@ -25,16 +25,22 @@ export default function Profile() {
   }, []);
 
   return (
-    <div className="container mx-auto h-screen flex justify-center items-center">
-      Profile
-      {username}
-      <Button variant="link" onClick={async ()=>{
-        await Auth.signOut()
-        handleUsernameChange('');
-        push(APP_ROUTES.public.home);
-      }}>
-  logout
-          </Button>
+    <div className="p-6">
+      <div>Welcome to the Profile.</div>
+      <pre>{JSON.stringify({username}, null, 4)}</pre>
+      
+      <div className='mt-4'>
+      <Button
+        variant="link"
+        onClick={async () => {
+          await Auth.signOut();
+          handleUsernameChange('');
+          push(APP_ROUTES.public.home);
+        }}
+      >
+        Logout
+      </Button>
+      </div>
     </div>
   );
 }

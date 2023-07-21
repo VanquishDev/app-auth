@@ -1,8 +1,3 @@
 export default function Dashboard() {
-  return (
-    <div className="container mx-auto h-screen flex justify-center items-center">
-      Dashboard
-    </div>
-  );
+  return <div className="p-6">Welcome to the Dashboard.</div>;
 }
-
