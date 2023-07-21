@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@aws-amplify/ui-react": "^5.0.5",
     "@hookform/resolvers": "^3.1.1",
     "@radix-ui/react-label": "^2.0.2",
     "@types/node": "20.4.2",

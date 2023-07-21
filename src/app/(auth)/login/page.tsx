@@ -21,6 +21,7 @@ type LoginFields = z.infer<typeof signUpSchema>;
 
 export default function Page() {
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, trigger } = useForm<LoginFields>({
     resolver: zodResolver(signUpSchema),
@@ -34,12 +35,15 @@ export default function Page() {
     if (isValid) {
       try {
         setMessage('')
+        setLoading(true)
         const user = await Auth.signIn(username, password);
         handleUsernameChange(user.username);
         console.log(user);
         user && router.push('/');
+        setLoading(false)
       } catch (error: any) {
         setMessage(error.message);
+        setLoading(false)
         console.log(error);
       }
     }
@@ -66,6 +70,7 @@ export default function Page() {
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Button variant="outline">Submit</Button>
         </div>
+        {loading && <div>autenticando...</div>}
         <div className="grid w-full max-w-sm items-center gap-1.5 text-center">{message}</div>
       </form>
     </div>

@@ -28,6 +28,7 @@ type ConfirmationFields = z.infer<typeof confirmationSchema>;
 
 export default function Page() {
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const [isConfirmation, setConfirmation] = useState(false);
 
   const methods = useForm<SignUpFields>({
@@ -40,11 +41,17 @@ export default function Page() {
 
   const router = useRouter();
 
-  const onSubmit = async ({ username, email, password, name }: SignUpFields) => {
+  const onSubmit = async ({
+    username,
+    email,
+    password,
+    name,
+  }: SignUpFields) => {
     const isValid = await methods.trigger();
     if (isValid) {
       try {
-        setMessage('')
+        setLoading(true);
+        setMessage('');
         const { user } = await Auth.signUp({
           username,
           password,
@@ -59,8 +66,10 @@ export default function Page() {
         });
         console.log('Auth.signUp', user);
         user && setConfirmation(true);
+        setLoading(false);
       } catch (error: any) {
-        setMessage(error.message)
+        setMessage(error.message);
+        setLoading(false);
         console.log(error);
       }
     }
@@ -71,10 +80,14 @@ export default function Page() {
     username,
   }: ConfirmationFields) => {
     try {
+      setLoading(true);
       await Auth.confirmSignUp(username, confirmationCode);
       router.push('/login');
-    } catch (error) {
-      console.error(error);
+      setLoading(false);
+    } catch (error: any) {
+      setMessage(error.message);
+      setLoading(false);
+      console.log(error);
     }
   };
 
@@ -99,10 +112,16 @@ export default function Page() {
               />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button>Submit</Button>
+              <Button variant="outline">Submit</Button>
+            </div>
+            {loading && <div>validando...</div>}
+            <div className="grid w-full max-w-sm items-center gap-1.5 text-center">
+              {message}
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button variant='link' onClick={() => setConfirmation(false)}>Sign Up</Button>
+              <Button variant="link" onClick={() => setConfirmation(false)}>
+                Sign Up
+              </Button>
             </div>
           </form>
         </div>
@@ -137,14 +156,17 @@ export default function Page() {
               />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button variant='outline' >Submit</Button>
+              <Button variant="outline">Submit</Button>
+            </div>
+            {loading && <div>registrando...</div>}
+            <div className="grid w-full max-w-sm items-center gap-1.5 text-center">
+              {message}
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button variant='link'  onClick={() => setConfirmation(true)}>
+              <Button variant="link" onClick={() => setConfirmation(true)}>
                 Confirmation Code
               </Button>
             </div>
-            <div className="grid w-full max-w-sm items-center gap-1.5 text-center">{message}</div>
           </form>
         </div>
       )}
