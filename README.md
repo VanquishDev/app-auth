@@ -16,3 +16,5 @@ https://docs.amplify.aws/lib/ssr/q/platform/js/#2-prepare-a-request-object-for-w
 
 
 https://staging.d2lv24m742l0i1.amplifyapp.com/
+
+https://docs.amplify.aws/lib/ssr/q/platform/js/#serializing

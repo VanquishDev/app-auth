@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Auth } from 'aws-amplify';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
@@ -14,7 +14,6 @@ const signUpSchema = z.object({
   name: z.string().min(1, 'Username is required'),
   username: z.string().min(1, 'Username is required'),
   email: z.string().email().min(6, 'Email is required'),
-  phone: z.string(),
   password: z.string().min(8, 'Password is required'),
 });
 
@@ -28,7 +27,8 @@ type SignUpFields = z.infer<typeof signUpSchema>;
 type ConfirmationFields = z.infer<typeof confirmationSchema>;
 
 export default function Page() {
-  const [isConfirmation, setConfirmation] = React.useState(false);
+  const [message, setMessage] = useState('');
+  const [isConfirmation, setConfirmation] = useState(false);
 
   const methods = useForm<SignUpFields>({
     resolver: zodResolver(signUpSchema),
@@ -44,6 +44,7 @@ export default function Page() {
     const isValid = await methods.trigger();
     if (isValid) {
       try {
+        setMessage('')
         const { user } = await Auth.signUp({
           username,
           password,
@@ -58,8 +59,9 @@ export default function Page() {
         });
         console.log('Auth.signUp', user);
         user && setConfirmation(true);
-      } catch (error) {
-        console.log('Auth.signUp', error);
+      } catch (error: any) {
+        setMessage(error.message)
+        console.log(error);
       }
     }
   };
@@ -100,7 +102,7 @@ export default function Page() {
               <Button>Submit</Button>
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button onClick={() => setConfirmation(false)}>Sign Up</Button>
+              <Button variant='link' onClick={() => setConfirmation(false)}>Sign Up</Button>
             </div>
           </form>
         </div>
@@ -135,13 +137,14 @@ export default function Page() {
               />
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button>Submit</Button>
+              <Button variant='outline' >Submit</Button>
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
-              <Button onClick={() => setConfirmation(true)}>
+              <Button variant='link'  onClick={() => setConfirmation(true)}>
                 Confirmation Code
               </Button>
             </div>
+            <div className="grid w-full max-w-sm items-center gap-1.5 text-center">{message}</div>
           </form>
         </div>
       )}
