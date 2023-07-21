@@ -1,29 +1,49 @@
 'use client';
 
+import { Auth } from 'aws-amplify';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { APP_ROUTES } from '@/constants/app-routes';
-import { checkUserAuthenticated } from '@/functions';
 
 type PrivateRouteProps = {
-  children: ReactNode;
+  children: ReactNode; 
 };
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const { push } = useRouter();
-  const isUserAuthenticated = checkUserAuthenticated();
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    if (!isUserAuthenticated) {
+    const getUser = async () => {
+      try {
+        const currentUser = await Auth.currentAuthenticatedUser();
+        setIsAuthenticated(currentUser ? true : false)
+        setChecked(true)
+      } catch (error) {
+        console.log(error)
+        setIsAuthenticated(false)
+        setChecked(false)
+      }
+    };
+    getUser();
+    return () => {
+      setIsAuthenticated(false)
+      setChecked(false)
+    }
+  }, []);
+
+  useEffect(() => {
+    if (checked && !isAuthenticated) {
       push(APP_ROUTES.public.login);
     }
-  }, [isUserAuthenticated, push]);
+  }, [isAuthenticated, checked, push]);
 
   return (
     <>
-      {!isUserAuthenticated && null}
-      {isUserAuthenticated && children}
+      {!isAuthenticated && null}
+      {isAuthenticated && children}
     </>
   );
 };

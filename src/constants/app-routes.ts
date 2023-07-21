@@ -1,5 +1,8 @@
 export const APP_ROUTES = {
   private: {
+    profile: {
+      name: '/profile',
+    },
     dashboard: {
       name: '/dashboard',
     },
@@ -10,7 +13,6 @@ export const APP_ROUTES = {
   public: {
     home: '/',
     login: '/login',
-    forget_password: '/login',
-    signup: '/signup',
+    signup: '/signup'
   },
 };

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from "@/context";
 import { useRouter } from 'next/navigation';
 import { Auth } from 'aws-amplify';
 import { useForm } from 'react-hook-form';
@@ -23,12 +24,14 @@ export default function Page() {
   });
 
   const router = useRouter();
+  const { handleUsernameChange } = useAuth();
 
   const onSubmit = async ({ username, password }: LoginFields) => {
     const isValid = await trigger();
     if (isValid) {
       try {
         const user = await Auth.signIn(username, password);
+        handleUsernameChange(user.username)
         console.log(user);
         user && router.push('/');
       } catch (error) {

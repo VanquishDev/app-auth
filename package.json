@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-amplify/ui-react": "^5.0.5",
     "@hookform/resolvers": "^3.1.1",
     "@radix-ui/react-label": "^2.0.2",
     "@types/node": "20.4.2",
@@ -24,10 +25,12 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.45.2",
+    "react-hot-toast": "^2.4.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "zustand": "^4.3.9"
   },
   "devDependencies": {
     "aws-crt": "^1.15.21",
