@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/context';
+import { useAuth } from '@/store/useAuth';
 import { useRouter } from 'next/navigation';
 import { Auth } from 'aws-amplify';
 import { useForm } from 'react-hook-form';
@@ -28,22 +28,28 @@ export default function Page() {
   });
 
   const router = useRouter();
-  const { handleUsernameChange } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
 
   const onSubmit = async ({ username, password }: LoginFields) => {
     const isValid = await trigger();
     if (isValid) {
       try {
-        setMessage('')
-        setLoading(true)
-        const user = await Auth.signIn(username, password);
-        handleUsernameChange(user.username);
-        console.log(user);
-        user && router.push('/');
-        setLoading(false)
+        setMessage('');
+        setLoading(true);
+        const currentUser = await Auth.signIn(username, password);
+        setIsAuthenticated(currentUser ? true : false);
+        setUser({
+            username: currentUser.username,
+            id: currentUser.attributes.sub,
+            name: '',
+            email: currentUser.attributes.email
+        })
+        currentUser && router.push('/');
+        setLoading(false);
       } catch (error: any) {
+        setIsAuthenticated(false);
         setMessage(error.message);
-        setLoading(false)
+        setLoading(false);
         console.log(error);
       }
     }
@@ -54,24 +60,29 @@ export default function Page() {
   };
 
   return (
-    <div
-      className="container mx-auto h-screen flex justify-center items-center"
-      onSubmit={handleSubmit(onSubmit, onError)}
-    >
-      <form className="flex flex-col gap-6">
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+    <div className="p-6 rounded-lg shadow-lg max-w-md bg-slate-50">
+      <div className="text-center text-lg font-semibold">Entrar</div>
+      <form
+        className="mt-6 flex flex-col gap-6"
+        onSubmit={handleSubmit(onSubmit, onError)}
+      >
+        <div className="grid items-center gap-1.5">
           <Label>Username</Label>
           <Input type="text" id="username" {...register('username')} />
         </div>
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+        <div className="grid items-center gap-1.5">
           <Label>Password</Label>
           <Input type="password" id="password" {...register('password')} />
         </div>
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+        <div className="grid w-full items-center gap-1.5">
           <Button variant="outline">Submit</Button>
         </div>
         {loading && <div>autenticando...</div>}
-        <div className="grid w-full max-w-sm items-center gap-1.5 text-center">{message}</div>
+        {message && (
+          <div className="grid w-full items-center gap-1.5 text-center">
+            {message}
+          </div>
+        )}
       </form>
     </div>
   );

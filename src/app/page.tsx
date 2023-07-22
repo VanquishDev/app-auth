@@ -1,12 +1,13 @@
 'use client';
 
-import { useAuth } from '@/context';
+import { useAuth } from '@/store/useAuth';
 
 export default function Home() {
-  const { username } = useAuth();
-  return username ? (
-    <main className="container pt-6">Hello, {username}.</main>
+  const { user } = useAuth();
+
+  return user && user.id ? (
+    <main className="">Hello, {user.username}.</main>
   ) : (
-    <main className="container pt-6">Hello, guest.</main>
+    <main className="">Hello, guest.</main>
   );
 }

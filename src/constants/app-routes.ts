@@ -13,6 +13,7 @@ export const APP_ROUTES = {
   public: {
     home: '/',
     login: '/login',
+    logout: '/logout',
     signup: '/signup'
   },
 };

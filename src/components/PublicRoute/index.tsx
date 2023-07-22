@@ -11,35 +11,32 @@ type PrivateRouteProps = {
   children: ReactNode;
 };
 
-const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { push } = useRouter();
-  const { isAuthenticated, setIsAuthenticated } = useAuth();
+const PublicRoute = ({ children }: PrivateRouteProps) => {
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
 
   useEffect(() => {
     const checkUser = async () => {
       try {
         const currentUser = await Auth.currentAuthenticatedUser();
         setIsAuthenticated(currentUser ? true : false);
-      } catch (error) {
-        console.log(error);
-        setIsAuthenticated(false);
-        push(APP_ROUTES.public.login);
-      }
+        setUser({
+            username: currentUser.username,
+            id: currentUser.attributes.sub,
+            name: '',
+            email: currentUser.attributes.email
+        })
+      } catch (error) { }
     };
-
-    checkUser();
-
-    return () => {
-      setIsAuthenticated(false);
-    };
+    if (!isAuthenticated) {
+      checkUser();
+    }
   }, []);
 
   return (
     <>
-      {!isAuthenticated && null}
-      {isAuthenticated && children}
+      {children}
     </>
   );
 };
 
-export default PrivateRoute;
+export default PublicRoute;

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Auth } from 'aws-amplify';
+import { useAuth } from '@/store/useAuth';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,6 +41,8 @@ export default function Page() {
   });
 
   const router = useRouter();
+  
+  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
 
   const onSubmit = async ({
     username,
@@ -64,7 +67,6 @@ export default function Page() {
             enabled: false,
           },
         });
-        console.log('Auth.signUp', user);
         user && setConfirmation(true);
         setLoading(false);
       } catch (error: any) {
@@ -81,8 +83,11 @@ export default function Page() {
   }: ConfirmationFields) => {
     try {
       setLoading(true);
-      await Auth.confirmSignUp(username, confirmationCode);
-      router.push('/login');
+      const r = await Auth.confirmSignUp(username, confirmationCode);
+      
+      if (r === 'SUCCESS') {
+        router.push('/login');
+      }
       setLoading(false);
     } catch (error: any) {
       setMessage(error.message);
@@ -92,13 +97,16 @@ export default function Page() {
   };
 
   return (
-    <>
+    <div className="p-6 rounded-lg shadow-lg max-w-md bg-slate-50">
       {isConfirmation ? (
-        <div
-          className="container mx-auto h-screen flex justify-center items-center"
-          onSubmit={handleSubmit(confirmCode)}
-        >
-          <form className="flex flex-col gap-6">
+        <div>
+          <div className="text-center text-lg font-semibold">
+            Confirmar Código
+          </div>
+          <form
+            className="mt-6 flex flex-col gap-6"
+            onSubmit={handleSubmit(confirmCode)}
+          >
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Username</Label>
               <Input type="text" id="username" {...register('username')} />
@@ -126,11 +134,12 @@ export default function Page() {
           </form>
         </div>
       ) : (
-        <div
-          className="container mx-auto h-screen flex justify-center items-center"
-          onSubmit={methods.handleSubmit(onSubmit)}
-        >
-          <form className="flex flex-col gap-6">
+        <div>
+          <div className="text-center text-lg font-semibold">Cadastrar-se</div>
+          <form
+            className="mt-6 flex flex-col gap-6"
+            onSubmit={methods.handleSubmit(onSubmit)}
+          >
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Label>Name</Label>
               <Input type="text" id="name" {...methods.register('name')} />
@@ -170,6 +179,6 @@ export default function Page() {
           </form>
         </div>
       )}
-    </>
+    </div>
   );
 }

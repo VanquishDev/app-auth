@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 export default function Dashboard() {
   const [users, setUsers] = useState([] as any);
+  
   useEffect(() => {
     const getUser = async () => {
       const currentUser = await Auth.currentAuthenticatedUser();
@@ -34,7 +35,7 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="br">
+    <div>
       <pre>{JSON.stringify({ users }, null, 4)}</pre>
     </div>
   );
