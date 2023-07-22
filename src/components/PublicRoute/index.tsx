@@ -7,12 +7,12 @@ import { ReactNode, useEffect, useState } from 'react';
 import { APP_ROUTES } from '@/constants/app-routes';
 import { useAuth } from '@/store/useAuth';
 
-type PrivateRouteProps = {
+type PublicRouteProps = {
   children: ReactNode;
 };
 
-const PublicRoute = ({ children }: PrivateRouteProps) => {
-  const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
+const PublicRoute = ({ children }: PublicRouteProps) => {
+  const { setIsAuthenticated, setUser } = useAuth();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -20,16 +20,19 @@ const PublicRoute = ({ children }: PrivateRouteProps) => {
         const currentUser = await Auth.currentAuthenticatedUser();
         setIsAuthenticated(currentUser ? true : false);
         setUser({
-            username: currentUser.username,
-            id: currentUser.attributes.sub,
-            name: '',
-            email: currentUser.attributes.email
-        })
+          username: currentUser.username,
+          id: currentUser.attributes.sub,
+          name: '',
+          email: currentUser.attributes.email,
+        });
       } catch (error) { }
     };
-    if (!isAuthenticated) {
-      checkUser();
-    }
+
+    checkUser();
+
+    return () => {
+      setIsAuthenticated(false);
+    };
   }, []);
 
   return (

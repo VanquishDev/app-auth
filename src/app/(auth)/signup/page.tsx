@@ -55,7 +55,7 @@ export default function Page() {
       try {
         setLoading(true);
         setMessage('');
-        const { user } = await Auth.signUp({
+        const input = {
           username,
           password,
           attributes: {
@@ -64,9 +64,12 @@ export default function Page() {
             phone_number: null,
           },
           autoSignIn: {
-            enabled: false,
+            enabled: true,
           },
-        });
+        }
+        console.log(input)
+        const { user } = await Auth.signUp(input);
+        console.log(user)
         user && setConfirmation(true);
         setLoading(false);
       } catch (error: any) {

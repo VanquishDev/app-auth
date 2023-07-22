@@ -5,9 +5,11 @@ import { useAuth } from '@/store/useAuth';
 export default function Home() {
   const { user } = useAuth();
 
-  return user && user.id ? (
-    <main className="">Hello, {user.username}.</main>
-  ) : (
-    <main className="">Hello, guest.</main>
+  return (
+    <main>
+      <div className="p-6">
+        <div className="text-xl font-semibold">Welcome {user.username}.</div>
+      </div>
+    </main>
   );
 }

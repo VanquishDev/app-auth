@@ -12,29 +12,8 @@ import Link from 'next/link';
 import { Button } from './button';
 
 export default function Nav() {
-  const { isAuthenticated, setIsAuthenticated, setUser, reset } = useAuth();
+  const { isAuthenticated, reset } = useAuth();
   const { push } = useRouter();
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const currentUser = await Auth.currentAuthenticatedUser();
-        setIsAuthenticated(currentUser ? true : false);
-        setUser({
-          username: currentUser.username,
-          id: currentUser.attributes.sub,
-          name: '',
-          email: currentUser.attributes.email,
-        });
-      } catch (error) {
-        reset();
-      }
-    };
-    getUser();
-    return () => {
-      reset();
-    };
-  }, []);
 
   return (
     <nav className="absolute top-0 left-0">

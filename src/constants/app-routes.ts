@@ -12,6 +12,7 @@ export const APP_ROUTES = {
   },
   public: {
     home: '/',
+    session: '/session',
     login: '/login',
     logout: '/logout',
     signup: '/signup'
