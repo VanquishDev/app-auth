@@ -6,11 +6,12 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/constants/app-routes';
 
-export default function Logout() {
+export default function Page() {
   const { reset } = useAuth();
   const { push } = useRouter();
 
   useEffect(() => {
+    console.log('signout')
     const logout = async () => {
       await Auth.signOut();
       reset();
@@ -18,7 +19,7 @@ export default function Logout() {
     };
     logout();
     return () => {};
-  }, []);
+  }, [push, reset]);
 
-  return <div>logout...</div>;
+  return <div>Até breve...</div>;
 }

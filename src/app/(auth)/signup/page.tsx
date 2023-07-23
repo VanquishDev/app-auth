@@ -89,7 +89,7 @@ export default function Page() {
       const r = await Auth.confirmSignUp(username, confirmationCode);
       
       if (r === 'SUCCESS') {
-        router.push('/login');
+        router.push('/signin');
       }
       setLoading(false);
     } catch (error: any) {
@@ -104,7 +104,7 @@ export default function Page() {
       {isConfirmation ? (
         <div>
           <div className="text-center text-lg font-semibold">
-            Confirmar Código
+            Confirmar código
           </div>
           <form
             className="mt-6 flex flex-col gap-6"
@@ -131,14 +131,14 @@ export default function Page() {
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Button variant="link" onClick={() => setConfirmation(false)}>
-                Sign Up
+                Criar uma conta
               </Button>
             </div>
           </form>
         </div>
       ) : (
         <div>
-          <div className="text-center text-lg font-semibold">Cadastrar-se</div>
+          <div className="text-center text-lg font-semibold">Criar uma conta</div>
           <form
             className="mt-6 flex flex-col gap-6"
             onSubmit={methods.handleSubmit(onSubmit)}
@@ -176,7 +176,7 @@ export default function Page() {
             </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Button variant="link" onClick={() => setConfirmation(true)}>
-                Confirmation Code
+                Confirmar código
               </Button>
             </div>
           </form>

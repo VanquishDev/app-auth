@@ -9,7 +9,7 @@ import { APP_ROUTES } from '@/constants/app-routes';
 import { useAuth } from '@/store/useAuth';
 
 import Link from 'next/link';
-import { Button } from './button';
+import { Button } from '@/components/ui/button';
 
 export default function Nav() {
   const { isAuthenticated, reset } = useAuth();
@@ -19,14 +19,22 @@ export default function Nav() {
     <nav className="absolute top-0 left-0">
       <Button variant="link">
         <Link href="/" className="mr-2">
-          Home
+          HOME
         </Link>
       </Button>
 
       {isAuthenticated && (
         <Button variant="link">
           <Link href="/dashboard" className="mr-2">
-            Dashboard
+            DASHBOARD
+          </Link>
+        </Button>
+      )}
+
+      {isAuthenticated && (
+        <Button variant="link">
+          <Link href="/admin" className="mr-2">
+            ADMIN
           </Link>
         </Button>
       )}
@@ -34,26 +42,20 @@ export default function Nav() {
       {!isAuthenticated && (
         <Button variant="link">
           <Link href="/signup" className="mr-2">
-            Sign Up
+            CRIAR UMA CONTA
           </Link>
         </Button>
       )}
 
       {!isAuthenticated && (
         <Button variant="link">
-          <Link href="/login">Login</Link>
+          <Link href="/signin">ENTRAR</Link>
         </Button>
       )}
 
       {isAuthenticated && (
         <Button variant="link">
-          <Link href="/profile">Profile</Link>
-        </Button>
-      )}
-
-      {isAuthenticated && (
-        <Button variant="link">
-          <Link href="/session">Session</Link>
+          <Link href="/profile">PERFIL</Link>
         </Button>
       )}
 
@@ -66,7 +68,7 @@ export default function Nav() {
             push(APP_ROUTES.public.home);
           }}
         >
-          Logout
+          DESCONECTAR
         </Button>
       )}
     </nav>

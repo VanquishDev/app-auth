@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/store/useAuth';
 
-export default function Session() {
+export default function Page() {
   const { isAuthenticated, user } = useAuth()
 
   // const SSR = getWithSSRContext();
@@ -13,7 +13,7 @@ export default function Session() {
 
   return (
     <div className="p-6">
-      <div className='text-xl font-semibold'>Welcome to the Session.</div>
+      <div className='text-xl font-semibold'>Bem vindo ao Admin.</div>
       <pre className='mt-10'>{JSON.stringify({ isAuthenticated, user }, null, 4)}</pre>
     </div>
   );

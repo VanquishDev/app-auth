@@ -16,6 +16,7 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
 
   useEffect(() => {
     const checkUser = async () => {
+      console.log('PublicRoute checkUser')
       try {
         const currentUser = await Auth.currentAuthenticatedUser();
         setIsAuthenticated(currentUser ? true : false);
@@ -33,7 +34,7 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
     return () => {
       setIsAuthenticated(false);
     };
-  }, []);
+  }, [setIsAuthenticated, setUser]);
 
   return (
     <>

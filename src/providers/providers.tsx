@@ -2,7 +2,7 @@
 
 import PrivateRoute from '@/components/PrivateRoute';
 import PublicRoute from '@/components/PublicRoute';
-import Nav from '@/components/ui/nav';
+import Nav from '@/components/Nav';
 
 import { usePathname } from 'next/navigation';
 import { checkIsPublicRoute } from '@/functions';

@@ -17,6 +17,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
 
   useEffect(() => {
     const checkUser = async () => {
+      console.log('PrivateRoute checkUser')
       try {
         const currentUser = await Auth.currentAuthenticatedUser();
         setIsAuthenticated(currentUser ? true : false);
@@ -29,7 +30,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
       } catch (error) {
         console.log(error);
         reset();
-        push(APP_ROUTES.public.login);
+        push(APP_ROUTES.public.signin);
       }
     };
 
@@ -38,7 +39,7 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
     return () => {
       setIsAuthenticated(false);
     };
-  }, []);
+  }, [push, reset, setIsAuthenticated, setUser]);
 
   return (
     <>
