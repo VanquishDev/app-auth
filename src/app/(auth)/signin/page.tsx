@@ -5,6 +5,7 @@ import { useAuth } from '@/store/useAuth';
 import { useRouter } from 'next/navigation';
 import { Auth } from 'aws-amplify';
 import { useForm } from 'react-hook-form';
+import { useToast } from "@/components/ui/use-toast"
 import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -20,8 +21,9 @@ const signUpSchema = z.object({
 type LoginFields = z.infer<typeof signUpSchema>;
 
 export default function Page() {
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { toast } = useToast()
 
   const { register, handleSubmit, trigger } = useForm<LoginFields>({
     resolver: zodResolver(signUpSchema),
@@ -34,7 +36,6 @@ export default function Page() {
     const isValid = await trigger();
     if (isValid) {
       try {
-        setMessage('');
         setLoading(true);
         const currentUser = await Auth.signIn(username, password);
         setIsAuthenticated(currentUser ? true : false);
@@ -48,7 +49,10 @@ export default function Page() {
         setLoading(false);
       } catch (error: any) {
         setIsAuthenticated(false);
-        setMessage(error.message);
+        toast({
+          title: error.message,
+          description: '',
+        })
         setLoading(false);
         console.log(error);
       }
@@ -78,11 +82,6 @@ export default function Page() {
           <Button variant="outline">Submit</Button>
         </div>
         {loading && <div>autenticando...</div>}
-        {message && (
-          <div className="grid w-full items-center gap-1.5 text-center">
-            {message}
-          </div>
-        )}
       </form>
     </div>
   );

@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useToast } from "@/components/ui/use-toast"
 
 const signUpSchema = z.object({
   name: z.string().min(1, 'Username is required'),
@@ -28,10 +29,11 @@ type SignUpFields = z.infer<typeof signUpSchema>;
 type ConfirmationFields = z.infer<typeof confirmationSchema>;
 
 export default function Page() {
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isConfirmation, setConfirmation] = useState(false);
 
+  const { toast } = useToast()
+  
   const methods = useForm<SignUpFields>({
     resolver: zodResolver(signUpSchema),
   });
@@ -41,7 +43,7 @@ export default function Page() {
   });
 
   const router = useRouter();
-  
+
   const { isAuthenticated, setIsAuthenticated, setUser } = useAuth();
 
   const onSubmit = async ({
@@ -54,7 +56,6 @@ export default function Page() {
     if (isValid) {
       try {
         setLoading(true);
-        setMessage('');
         const input = {
           username,
           password,
@@ -66,15 +67,18 @@ export default function Page() {
           autoSignIn: {
             enabled: true,
           },
-        }
-        console.log(input)
+        };
+        console.log(input);
         const { user } = await Auth.signUp(input);
-        console.log(user)
+        console.log(user);
         user && setConfirmation(true);
         setLoading(false);
       } catch (error: any) {
-        setMessage(error.message);
         setLoading(false);
+        toast({
+          title: error.message,
+          description: '',
+        });
         console.log(error);
       }
     }
@@ -87,14 +91,17 @@ export default function Page() {
     try {
       setLoading(true);
       const r = await Auth.confirmSignUp(username, confirmationCode);
-      
+
       if (r === 'SUCCESS') {
         router.push('/signin');
       }
       setLoading(false);
     } catch (error: any) {
-      setMessage(error.message);
       setLoading(false);
+      toast({
+        title: error.message,
+        description: '',
+      });
       console.log(error);
     }
   };
@@ -126,9 +133,6 @@ export default function Page() {
               <Button variant="outline">Submit</Button>
             </div>
             {loading && <div>validando...</div>}
-            <div className="grid w-full max-w-sm items-center gap-1.5 text-center">
-              {message}
-            </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Button variant="link" onClick={() => setConfirmation(false)}>
                 Criar uma conta
@@ -138,7 +142,9 @@ export default function Page() {
         </div>
       ) : (
         <div>
-          <div className="text-center text-lg font-semibold">Criar uma conta</div>
+          <div className="text-center text-lg font-semibold">
+            Criar uma conta
+          </div>
           <form
             className="mt-6 flex flex-col gap-6"
             onSubmit={methods.handleSubmit(onSubmit)}
@@ -171,9 +177,6 @@ export default function Page() {
               <Button variant="outline">Submit</Button>
             </div>
             {loading && <div>registrando...</div>}
-            <div className="grid w-full max-w-sm items-center gap-1.5 text-center">
-              {message}
-            </div>
             <div className="grid w-full max-w-sm items-center gap-1.5">
               <Button variant="link" onClick={() => setConfirmation(true)}>
                 Confirmar código
