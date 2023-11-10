@@ -18,7 +18,7 @@
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.14",
-    "aws-amplify": "^5.3.4",
+    "aws-amplify": "^5.3.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "eslint": "8.45.0",
@@ -38,7 +38,7 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "aws-crt": "^1.15.21",
+    "aws-crt": "^1.19.0",
     "encoding": "^0.1.13"
   }
 }
